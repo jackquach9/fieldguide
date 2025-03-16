@@ -2,7 +2,7 @@ numpy
 opencv-python-headless
 streamlit_image_coordinates
 ultralytics
-skimage
+scikit-image
 torch
 torchvision
 pandas
