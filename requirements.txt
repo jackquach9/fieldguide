@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 numpy
 opencv-python-headless
 streamlit_image_coordinates
@@ -8,6 +7,4 @@ torch
 torchvision
 pandas
 plotly
-=======
 opencv-python
->>>>>>> daeb880 (adding style)
