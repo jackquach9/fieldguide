@@ -14,17 +14,24 @@ import torch.nn.functional as F
 import time
 import plotly.graph_objects as go
 
-def predict(model_path, img):
+def predict(model_path, img, mode=None):
     img = Image.fromarray(img)
     model = models.resnet50(pretrained=True)
     model.fc = nn.Linear(model.fc.in_features, 1011)
     model.load_state_dict(torch.load(model_path))
     model.eval()
-    transform = transforms.Compose([
-        transforms.Resize((224, 224)), 
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
-    ])
+    if mode == "whole":
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize((224, 224)), 
+            transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+        ])
+    else:
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize((128, 128)), 
+            transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+        ])
 
     input = transform(img).unsqueeze(0)
 
@@ -41,8 +48,11 @@ def word_stream(line):
         yield word + " "
         time.sleep(0.05)
 
-def make_prediction(image):
-    top_5 = predict('./birdguide_model_resnet_v2.pth', image)
+def make_prediction(image, mode=None):
+    if mode == "whole":
+        top_5 = predict('./birdguide_model_resnet_v2.pth', image, mode=mode)
+    else:
+        top_5 = predict('./birdguide_model_resnet_v5.pth', image)
     top_label, top_prob = top_5[0][0], top_5[0][1]
     label_map = pd.read_csv('./bird_mappings.csv').to_dict()["Bird Name"]
     predicted_name = label_map[top_label]
@@ -82,9 +92,12 @@ def make_prediction(image):
 
 def main():
 
+    with open("styles.css") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
     with st.container():
         st.markdown(
-            "<h1 style='text-align: center; color: white; background-color: darkgreen; padding: 10px; border-radius: 5px;'>FieldGuide: AI-Powered Wildlife Identification (BirdsEye Mode)</h1>",
+            "<h1 style='text-align: center;'>FieldGuide: AI-Powered Wildlife Identification (BirdsEye Mode)</h1>",
             unsafe_allow_html=True
         )
 
@@ -144,7 +157,7 @@ def main():
                         st.write("No object detected at the selected pixel.")
                             
                 else:
-                    make_prediction(image)
+                    make_prediction(image, "whole")
                     return
 
         
