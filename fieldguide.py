@@ -100,7 +100,7 @@ def main():
             "<h1 style='text-align: center;'>FieldGuide: AI-Powered Wildlife Identification (BirdsEye Mode)</h1>",
             unsafe_allow_html=True
         )
-
+    st.image("IMG_8048.jpg")
     st.text(" ")
     st.text("Welcome to FieldGuide (BirdsEye Mode)! Add an image of a bird (or multiple birds), and we will use a computer vision machine learning algorithm to classify the species of bird! (Works best on birds commonly found in North America).")
 
